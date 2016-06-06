@@ -1,0 +1,31 @@
+%{
+#include "hpp.hpp"
+string LexString;
+%}
+%option noyywrap
+%option yylineno
+
+%x docstring
+%x lexstring
+%%
+#[^\n]*					{}
+
+\"						{BEGIN(docstring);LexString="";}
+<docstring>\"			{BEGIN(INITIAL);yylval.o=new Str(LexString);return DOC;}
+<docstring>.			{LexString+=yytext[0];}
+
+\(						TOC(Op,LP)
+\)						TOC(Op,RP)
+\[						TOC(Op,LQ)
+\]						TOC(Op,RQ)
+\{						TOC(Op,LC)
+\}						TOC(Op,RC)
+
+\=						TOC(Op,EQ)
+\@						TOC(Op,AT)
+\~						TOC(Op,TILD)
+
+[a-zA-Z0-9_.?]+			TOC(Sym,SYM)
+
+[ \t\r\n]+				{}
+%%

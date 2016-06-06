@@ -1,0 +1,5 @@
+src.src log.log
+core = [ ypp.ypp lpp.lpp hpp.hpp cpp.cpp Makefile ]
+.gitignore
+vim = [ sh.sh bat.bat ] " (g)vim helpers "
+README.md
