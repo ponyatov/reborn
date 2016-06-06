@@ -9,11 +9,12 @@ using namespace std;
 #include "meta.hpp"
 
 struct Sym {
-	string val;
+	string val; Sym* doc;
 	Sym(string);
 	vector<Sym*> nest; void push(Sym*);
 	string dump(int=0); virtual string head(); string pad(int);
 	virtual Sym* eval();
+	virtual string str();
 };
 extern map<string,Sym*> glob;
 extern void glob_init();

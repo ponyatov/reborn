@@ -3,12 +3,13 @@
 void yyerror(string msg) { cout<<YYERR; cerr<<YYERR; exit(-1); }
 int main() { glob_init(); return yyparse(); }
 
-Sym::Sym(string V) { val=V; }
+Sym::Sym(string V) { val=V; doc=NULL; }
 void Sym::push(Sym*o) { nest.push_back(o); }
 
 string Sym::head() { return "<"+val+">"; }
 string Sym::pad(int n) { string S; for (int i=0;i<n;i++) S+='\t'; return S; }
 string Sym::dump(int depth) { string S ="\n"+pad(depth)+head();
+	if (doc) S += '\t'+doc->str();
 	for (auto it=nest.begin(),e=nest.end();it!=e;it++)
 		S += (*it)->dump(depth+1);
 	return S; }
@@ -19,7 +20,10 @@ Sym* Sym::eval() {
 		(*it) = (*it)->eval();
 	return this; }
 
+string Sym::str() { return val; }
 
+Str::Str(string V):Sym(V) {}
+string Str::head() { return "'"+val+"'"; }
 
 Op::Op(string V):Sym(V) {}
 string Op::head() { return val; }

@@ -10,6 +10,7 @@
 REPL : | REPL ex { cout << $2->dump() << endl; } ;
 scalar : SYM | NUM | STR ;
 ex : scalar
+	| ex DOC		{ $$=$1; $$->doc=$2; }
 	| LP ex RP		{ $$=$2; }
 	| LQ vector RQ	{ $$=$2; }
 	| LC block RC	{ $$=$2; }
