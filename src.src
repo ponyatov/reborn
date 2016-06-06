@@ -3,3 +3,12 @@ core = [ ypp.ypp lpp.lpp hpp.hpp cpp.cpp Makefile ]
 .gitignore
 vim = [ sh.sh bat.bat ] " (g)vim helpers "
 README.md
+
+.gitignore = [
+	'*~'
+	'*.swp'
+	exe.exe
+	log.log
+	ypp.tab.?pp
+	lex.yy.c
+]

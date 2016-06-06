@@ -14,6 +14,10 @@ string LexString;
 <docstring>\"			{BEGIN(INITIAL);yylval.o=new Str(LexString);return DOC;}
 <docstring>.			{LexString+=yytext[0];}
 
+'						{BEGIN(lexstring);LexString="";}
+<lexstring>'			{BEGIN(INITIAL);yylval.o=new Str(LexString);return STR;}
+<lexstring>.			{LexString+=yytext[0];}
+
 \(						TOC(Op,LP)
 \)						TOC(Op,RP)
 \[						TOC(Op,LQ)
