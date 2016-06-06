@@ -5,9 +5,17 @@
 %token <o> SYM NUM STR DOC		/* symbol number 'string' "docstring" */
 %token <o> LP RP LQ RQ LC RC	/* brackets: () [] {} */
 %token <o> EQ AT TILD			/* operators: = @ ~ */
+%token <o> ADD SUB MUL DIV POW	/* + - * / ^ */
+%token <o> BAR					/* | */
 %type <o> ex scalar vector block
+
+%right EQ
+%left ADD SUB
+%left MUL DIV
+%left POW
+%left TILD
 %%
-REPL : | REPL ex { cout << $2->dump() << endl; } ;
+REPL : | REPL ex { cout << $2->eval()->dump() << endl; } ;
 scalar : SYM | NUM | STR ;
 ex : scalar
 	| ex DOC		{ $$=$1; $$->doc=$2; }
@@ -17,6 +25,12 @@ ex : scalar
 	| TILD ex		{ $$=$1; $$->push($2); }
 	| ex EQ ex		{ $$=$2; $$->push($1); $$->push($3); }
 	| ex AT ex		{ $$=$2; $$->push($1); $$->push($3); }
+	| ex BAR ex		{ $$=$2; $$->push($1); $$->push($3); }
+	| ex ADD ex		{ $$=$2; $$->push($1); $$->push($3); }
+	| ex SUB ex		{ $$=$2; $$->push($1); $$->push($3); }
+	| ex MUL ex		{ $$=$2; $$->push($1); $$->push($3); }
+	| ex DIV ex		{ $$=$2; $$->push($1); $$->push($3); }
+	| ex POW ex		{ $$=$2; $$->push($1); $$->push($3); }
 ;
 vector:				{ $$=new Vector(); }
 	| vector ex		{ $$=$1; $$->push($2); }

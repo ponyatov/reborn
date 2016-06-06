@@ -2,6 +2,7 @@
 #define _H_bI
 
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include <vector>
 #include <map>
@@ -15,14 +16,20 @@ struct Sym {
 	string dump(int=0); virtual string head(); string pad(int);
 	virtual Sym* eval();
 	virtual string str();
+	virtual Sym* add(Sym*);
+	virtual Sym* map(Sym*); virtual int len(); virtual Sym* idx(int);
+	virtual Sym* at(Sym*);
 };
 extern map<string,Sym*> glob;
 extern void glob_init();
 
-struct Str: Sym { Str(string); string head(); };
+struct Error: Sym { Error(string); };
+
+struct Str: Sym { Str(string); string head(); Sym*add(Sym*);
+	int len(); Sym*idx(int); };
 struct Vector: Sym { Vector(); string head(); };
 
-struct Op : Sym { Op(string); string head(); };
+struct Op : Sym { Op(string); string head(); Sym*eval(); };
 struct Block: Sym { Block(); string head(); };
 
 extern int yylex();

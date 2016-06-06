@@ -21,12 +21,44 @@ Sym* Sym::eval() {
 	return this; }
 
 string Sym::str() { return val; }
+Sym* Sym::add(Sym*o) { return new Error(head()+"+"+o->head()); }
+
+int Sym::len()	{ return 1; }
+Sym* Sym::idx(int i) {
+	if (i) return new Error("idx " + head());
+	else return this; }
+Sym* Sym::map(Sym*o) { Sym* L = new Vector();
+	for (int i=0;i<o->len();i++)
+		L->push(at(o->idx(i)));
+	return L; }
+
+Sym* Sym::at(Sym*o) { push(o); return this; }
+
+Error::Error(string V):Sym("error") { yyerror(V); }
 
 Str::Str(string V):Sym(V) {}
-string Str::head() { return "'"+val+"'"; }
+string Str::head() { string S = "'";
+	for (int i=0;i<val.length();i++)
+		switch (val[i]) {
+			case '\n': S+="\\n"; break;
+			case '\t': S+="\\t"; break;
+			default: S+=val[i];
+		}
+	return S+"'"; }
+Sym* Str::add(Sym*o) { return new Str(val+o->str()); }
+int Str::len() { return val.length(); }
+Sym* Str::idx(int i) {
+	if (i>len()) return new Error("idx "+head()); else {
+		ostringstream os; os << val[i];
+		return new Str(os.str()); }}
 
 Op::Op(string V):Sym(V) {}
-string Op::head() { return val; }
+string Op::head() { return "("+val+")"; }
+Sym* Op::eval() {
+	if (val=="~") return nest[0]; else Sym::eval();
+	if (val=="+") return nest[0]->add(nest[1]);
+	if (val=="|") return nest[0]->map(nest[1]);
+	return this; }
 
 Vector::Vector():Sym("[]") {}
 string Vector::head() { return val; }
@@ -36,5 +68,12 @@ string Block::head() { return val; }
 
 map<string,Sym*> glob;
 void glob_init() {
-	glob["MODULE"] = new Sym(MODULE);
+	glob["MODULE"] = new Str(MODULE);
+	glob["ABOUT"] = new Str(ABOUT);
+	glob["AUTHOR"] = new Str(AUTHOR);
+	glob["LICENSE"] = new Str(LICENSE);
+	glob["GITHUB"] = new Str(GITHUB);
+	glob["sp"] = new Str(" ");
+	glob["nl"] = new Str("\n");
+	glob["tab"] = new Str("\t");
 }
